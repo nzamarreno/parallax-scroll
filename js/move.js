@@ -1,11 +1,11 @@
 class Parallax {
   constructor() {
     this.round = 1000;
-    this._properties = ["x", "y", "z"];
+    this._properties = [ "x", "y", "z" ];
     this._requestAnimationFrame = null;
   }
 
-  init() {
+  init () {
     this._requestAnimationFrame = (() => {
       return (
         window.requestAnimationFrame ||
@@ -13,7 +13,7 @@ class Parallax {
         window.mozRequestAnimationFrame ||
         window.oRequestAnimationFrame ||
         window.msRequestAnimationFrame ||
-        function(/* function */ callback, /* DOMElement */ element) {
+        function (/* function */ callback, /* DOMElement */ element) {
           window.setTimeout(callback, 1000 / 60);
         }
       );
@@ -22,9 +22,11 @@ class Parallax {
     this._onScroll(true);
   }
 
-  _onScroll(noSmooth) {
-    let scroll = document.scrollTop;
-    let windowHeight = window.height;
+
+  _onScroll (noSmooth) {
+    let scroll = window.scrollY;
+    let windowHeight = window.innerHeight;
+
     let $elementsMove = document.querySelectorAll("[data-parallax]");
 
     /**
@@ -42,21 +44,22 @@ class Parallax {
       let $el = el;
       let properties = [];
       let applyProperties = false;
-      let style = $el.getAttribute("style");
+      var style = $el[ "style_el" ];
 
       if (style == undefined) {
-        style = $el.setAttribute("style", "");
+        style = $el.getAttribute("style") || "";
+        $el[ "style_el" ] = style;
       }
 
       let data = JSON.parse($el.getAttribute("data-parallax"));
-      let scrollFrom = data["from-scroll"];
+      let scrollFrom = data[ "from-scroll" ];
 
       if (scrollFrom == undefined)
         scrollFrom = Math.max(0, $el.offsetTop - windowHeight);
       scrollFrom = scrollFrom | 0;
 
-      let scrollDistance = data["distance"];
-      let scrollTo = data["to-scroll"];
+      let scrollDistance = data[ "distance" ];
+      let scrollTo = data[ "to-scroll" ];
       if (scrollDistance == undefined && scrollTo == undefined)
         scrollDistance = windowHeight;
 
@@ -65,7 +68,7 @@ class Parallax {
       if (scrollTo == undefined) scrollTo = scrollFrom + scrollDistance;
       scrollTo = scrollTo | 0;
 
-      var smoothness = data["smoothness"];
+      var smoothness = data[ "smoothness" ];
       if (smoothness == undefined) smoothness = 30;
       smoothness = smoothness | 0;
 
@@ -79,13 +82,12 @@ class Parallax {
       this._properties.map(prop => {
         var defaultProp = 0;
 
-        var to = data[prop];
+        var to = data[ prop ];
 
         //If the propriety don't have definition, break map function
         if (to == undefined) return;
 
-        //var prev = $el.data("_" + prop);
-        var prev = $el["_" + prop];
+        var prev = $el[ "_" + prop ];
 
         if (prev == undefined) {
           prev = defaultProp;
@@ -93,7 +95,7 @@ class Parallax {
 
         var next =
           (to - defaultProp) *
-            ((scrollCurrent - scrollFrom) / (scrollTo - scrollFrom)) +
+          ((scrollCurrent - scrollFrom) / (scrollTo - scrollFrom)) +
           defaultProp;
 
         var val = prev + (next - prev) / smoothness;
@@ -102,21 +104,21 @@ class Parallax {
 
         if (val == prev && next == to) val = to;
 
-        if (!properties[prop]) {
-          properties[prop] = 0;
+        if (!properties[ prop ]) {
+          properties[ prop ] = 0;
         }
 
-        properties[prop] += val;
+        properties[ prop ] += val;
 
-        if (prev != properties[prop]) {
-          $el["_" + prop] = properties[prop];
+        if (prev != properties[ prop ]) {
+          $el[ "_" + prop ] = properties[ prop ];
           applyProperties = true;
         }
       });
 
       if (applyProperties) {
-        if (properties["z"] != undefined) {
-          var perspective = data["perspective"];
+        if (properties[ "z" ] != undefined) {
+          var perspective = data[ "perspective" ];
           if (perspective == undefined) perspective = 800;
           var $parent = $el.parent();
           if (!$parent.data("style"))
@@ -124,40 +126,41 @@ class Parallax {
           $parent.attr(
             "style",
             "perspective:" +
-              perspective +
-              "px; -webkit-perspective:" +
-              perspective +
-              "px; " +
-              $parent.data("style")
+            perspective +
+            "px; -webkit-perspective:" +
+            perspective +
+            "px; " +
+            $parent.data("style")
           );
         }
 
         var translate3d =
           "translate3d(" +
-          (properties["x"] ? properties["x"] : 0) +
+          (properties[ "x" ] ? properties[ "x" ] : 0) +
           "px, " +
-          (properties["y"] ? properties["y"] : 0) +
+          (properties[ "y" ] ? properties[ "y" ] : 0) +
           "px, " +
-          (properties["z"] ? properties["z"] : 0) +
+          (properties[ "z" ] ? properties[ "z" ] : 0) +
           "px)";
         var cssTransform = translate3d + ";";
 
-        /* $el.setAttribute(
+        $el.setAttribute(
           "style",
           "transform:" +
-            cssTransform +
-            " -webkit-transform:" +
-            cssTransform +
-            " " +
-            style
-        ); */
+          cssTransform +
+          " -webkit-transform:" +
+          cssTransform +
+          " " +
+          style
+        );
       }
     });
 
     if (window.requestAnimationFrame) {
-      window.requestAnimationFrame(this._onScroll.bind(this), false);
-    } else {
-      this._requestAnimationFrame(this._onScroll.bind(this), false);
+      window.requestAnimationFrame(() => this._onScroll.call(this));
+    }
+    else {
+      this._requestAnimationFrame(() => this._onScroll.call(this));
     }
   }
 }
