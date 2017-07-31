@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Scroll Parallax</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+	<header class="hero">
+		<h1 class="hero__title">
+			Scroll Down
+		</h1>
+	</header>
+	<section>
+		<div class="container">
+			<h2 class="text__title" data-parallax='{"y": 100, "from-scroll": 50}'>
+				Hello Moto
+			</h2>
+			<p class="text" data-parallax='{"y": -50, "from-scroll": 50}'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Perferendis necessitatibus eos provident nesciunt facere rem
+				quam, quisquam aliquid natus adipisci, error ducimus animi non sit perspiciatis explicabo cupiditate! Magnam, modi.</p>
+		</div>
+	</section>
+	<script src="parallax-move.js"></script>
+	<script>
+		let movePager = new Parallax();
+		movePager.init();
+	</script>
+</body>
+
+</html>

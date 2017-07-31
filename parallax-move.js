@@ -44,7 +44,7 @@ class Parallax {
       let $el = el;
       let properties = [];
       let applyProperties = false;
-      var style = $el[ "style_el" ];
+      let style = $el[ "style_el" ];
 
       if (style == undefined) {
         style = $el.getAttribute("style") || "";
@@ -52,8 +52,8 @@ class Parallax {
       }
 
       let data = JSON.parse($el.getAttribute("data-parallax"));
-      let scrollFrom = data[ "from-scroll" ];
 
+      let scrollFrom = data[ "from-scroll" ];
       if (scrollFrom == undefined)
         scrollFrom = Math.max(0, $el.offsetTop - windowHeight);
       scrollFrom = scrollFrom | 0;
@@ -65,7 +65,8 @@ class Parallax {
 
       scrollDistance = Math.max(scrollDistance | 0, 1);
 
-      if (scrollTo == undefined) scrollTo = scrollFrom + scrollDistance;
+      if (scrollTo == undefined)
+        scrollTo = scrollFrom + scrollDistance;
       scrollTo = scrollTo | 0;
 
       var smoothness = data[ "smoothness" ];
